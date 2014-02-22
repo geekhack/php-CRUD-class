@@ -1,10 +1,8 @@
-/*
-   @Rafael Wanjiku
-*/
 <?php
+include('connection.php');
 
-//include the autoload for the classes
-class User
+
+class User extends Connection 
 {
   public $user;
   public $tablename;
@@ -38,7 +36,6 @@ public function setColumns($columns)
 public function getColumns()
 { 
   $enteredarray=$this->columns;
-  //$enteredarray=array('fname','lname');
   $value=implode(',',$enteredarray);
   return $value;
 }
@@ -56,10 +53,10 @@ public function getValu()
 }
  public function insertUser()
  {
-   mysql_connect("localhost","root","") or die("could not connect to the server");
-   mysql_select_db("school");
+   Connection::getConnection();
+
    $q="INSERT INTO ".$this->getTable()."(".$this->getColumns().") VALUES('".$this->getValu()."')";
-   $r=mysql_query($q);
+   $r=mysql_query($q) or die("hahahah".mysql_error());
    if(!$r)
    {
     echo "failed".mysql_error();
@@ -68,19 +65,49 @@ public function getValu()
    {
     echo "Record successfully inserted";
    }
-   //$this->user=$user;  
+   
  } 
- //creating the retrieve query
+ //retrieving all the details from the table specified 
  public function selectUser()
  {
-   
-   
+   Connection::getConnection();
+   $q="SELECT * FROM ".$this->getTable()."";
+   $r=mysql_query($q);
+   if($r){
+     //get the columns and the values
+      while($rows=mysql_fetch_array($r)){
+
+        foreach ($rows as $value) {
+          echo $value.'<br/>';
+         
+        }
+      }
+      }
+
+      
+ }
+ //retrieving details from the table using the where clause
+
+ public function selectUser2()
+ {
+    Connection::getConnection();
+
+    $q="SELECT * FROM ".$this->getTable()." WHERE ".$this->getColumns()."=".$this->getValu()."";
+    $r=mysql_query($q);
+    if($r){
+
+      while ($rows=mysql_fetch_array($r)) {
+          foreach ($rows as $value) {
+             echo $value.'<br/>';
+          }
+      }
+    }
+
  }
  public function updateUser()
  {
-   mysql_connect("localhost","root","") or die("could not connect to the server");
-   mysql_select_db("school");
-   
+   Connection::getConnection();
+
    $q="UPDATE ".$this->getTable()." SET ".$this->getColumns()."='".$this->getValu()."' WHERE ".$this->getColumns()."='".$this->getId()."'";
    $r=mysql_query($q);
    if(!$r)
@@ -96,10 +123,9 @@ public function getValu()
  
  public function deleteUser()
  {
-   mysql_connect("localhost","root","") or die("could not connect to the server");
-   mysql_select_db("school");
+   Connection::getConnection();
    
-   $q="DELETE FROM ".$this->getTable()." WHERE ".$this->getColumns()."='".$this->getId()."'";
+   $q="DELETE FROM ".$this->getTable()." WHERE ".$this->getColumns()."=".$this->getValu()."";
    $r=mysql_query($q);
    if(!$r)
    {
@@ -114,22 +140,19 @@ public function getValu()
 }
 
 $tablempya=new User();
-$tablempya->setTable('foods');
+$tablempya->setTable('gsags');
 $tablempya->getTable();
-//getting the table columns from a fixed code
-$items=array('foodname');
+
+$items=array('id');
 $tablempya->setColumns($items);
 $tablempya->getColumns();
-$tablempya->setId('chapati');
-$tablempya->getId();
-/*getting the columns values for the table for input
-$vitu=array('chapati','round with sweet eyes','starchy','20','13000');
-$tablempya->setValu($vitu);
+//set the values to be entered into the columns
+$insertvalues=array('2');
+$tablempya->setValu($insertvalues);
 $tablempya->getValu();
-*/
-//insert the data into the database
 
-$tablempya->deleteUser();
+
+$tablempya->selectUser2();
 
 
 ?>
