@@ -39,7 +39,6 @@ public function getColumns()
   $value=implode(',',$enteredarray);
   return $value;
 }
-//
 public function setValu($valu)
 {
   $this->valu=$valu;
@@ -56,7 +55,7 @@ public function getValu()
    Connection::getConnection();
 
    $q="INSERT INTO ".$this->getTable()."(".$this->getColumns().") VALUES('".$this->getValu()."')";
-   $r=mysql_query($q) or die("hahahah".mysql_error());
+   $r=mysql_query($q) or die("oops".mysql_error());
    if(!$r)
    {
     echo "failed".mysql_error();
@@ -74,16 +73,17 @@ public function getValu()
    $q="SELECT * FROM ".$this->getTable()."";
    $r=mysql_query($q);
    if($r){
-     //get the columns and the values
-      while($rows=mysql_fetch_array($r)){
 
-        foreach ($rows as $value) {
-          echo $value.'<br/>';
-         
-        }
-      }
-      }
+  //get the columns and the values
+   $s=array();
+  //loop through the rows   
+   while($rows=mysql_fetch_array($r))
+    { 
+      $s[]=$rows;
 
+    } 
+    return $s;           
+    }
       
  }
  //retrieving details from the table using the where clause
@@ -92,18 +92,22 @@ public function getValu()
  {
     Connection::getConnection();
 
-    $q="SELECT * FROM ".$this->getTable()." WHERE ".$this->getColumns()."=".$this->getValu()."";
+    $q="SELECT * FROM ".$this->getTable()." WHERE ".implode(',',$this->getColumns()."=".$this->getValu())."";
     $r=mysql_query($q);
+
     if($r){
 
-      while ($rows=mysql_fetch_array($r)) {
-          foreach ($rows as $value) {
-             echo $value.'<br/>';
-          }
+      $s=array();
+      while ($rows=mysql_fetch_array($r))
+       {
+         $s[]=$rows;
+       }
+       return $s;
       }
-    }
+  }
 
- }
+ 
+
  public function updateUser()
  {
    Connection::getConnection();
@@ -139,20 +143,7 @@ public function getValu()
  }
 }
 
-$tablempya=new User();
-$tablempya->setTable('gsags');
-$tablempya->getTable();
 
-$items=array('id');
-$tablempya->setColumns($items);
-$tablempya->getColumns();
-//set the values to be entered into the columns
-$insertvalues=array('2');
-$tablempya->setValu($insertvalues);
-$tablempya->getValu();
-
-
-$tablempya->selectUser2();
 
 
 ?>
